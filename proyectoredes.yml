@@ -1,0 +1,33 @@
+version: "3"
+
+volumes:
+  web_data:
+  sql_data:
+
+services:
+  my-prestashop:
+    image: "prestashop/prestashop:latest"
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      - DB_SERVER=my-mysql
+      - PS_DEV_MODE=1
+    networks:
+      - my-network
+    volumes:
+      - ./data/prestashop/:/var/www/html
+      - web_data:/var/lib/prestashop
+
+  my-mysql:
+    image: "mysql:latest"
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=admin
+    networks:
+      - my-network
+    volumes:
+      - sql_data:/var/lib/mysql
+  app:
